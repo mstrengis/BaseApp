@@ -32,7 +32,7 @@ def getSnapshotRepositoryUrl() {
 }
 
 def getRepositoryUsername() {
-    //return "mstrengis"
+    return "mstrengis"
 }
 
 def getRepositoryPassword() {
