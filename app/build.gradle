@@ -32,11 +32,11 @@ def getSnapshotRepositoryUrl() {
 }
 
 def getRepositoryUsername() {
-    return "mstrengis"
+
 }
 
 def getRepositoryPassword() {
-    return "clubisopen"
+
 }
 
 afterEvaluate { project ->
