@@ -12,32 +12,37 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import lv.androiddev.BaseApp.utils.BaseItem;
-
-public class ApiRequestList extends Request<ArrayList<BaseItem>> {
+public class ApiRequest<T> extends Request<T> {
 
     private static final String PROTOCOL_CHARSET = "utf-8";
     private JSONObject mParams, mJSONRawData;
     private ApiInterface mApiInterface;
     private HashMap<String, String> mPostFields, mHeaders;
 
-    public ApiRequestList(int method, String url, HashMap<String, String> postFields, HashMap<String, String> headers, JSONObject params, ApiInterface apiInterface) {
+    public ApiRequest(int method, String url, HashMap<String, String> postFields, HashMap<String, String> headers, JSONObject params, ApiInterface<T> apiInterface) {
         super(method, url, apiInterface);
         mParams = params;
         mApiInterface = apiInterface;
         mHeaders = headers;
         mPostFields = postFields;
+
+        if(mPostFields == null){
+            mPostFields = new HashMap<>();
+        }
+
+        if(mHeaders == null){
+            mHeaders = new HashMap<>();
+        }
         //setRetryPolicy(new DraugiemRetryPolicy()); //TODO request policy
     }
 
     @Override
-    protected Response<ArrayList<BaseItem>> parseNetworkResponse(NetworkResponse networkResponse) {
+    protected Response<T> parseNetworkResponse(NetworkResponse networkResponse) {
         try {
             mJSONRawData = new JSONObject(new String(networkResponse.data, HttpHeaderParser.parseCharset(networkResponse.headers)));
-            return Response.success(mApiInterface.parseData(mJSONRawData), HttpHeaderParser.parseCacheHeaders(networkResponse));
+            return (Response<T>) Response.success(mApiInterface.parseData(mJSONRawData), HttpHeaderParser.parseCacheHeaders(networkResponse));
         } catch (JSONException e) {
             e.printStackTrace();
             return Response.error(new ParseError(e));
@@ -49,7 +54,7 @@ public class ApiRequestList extends Request<ArrayList<BaseItem>> {
     }
 
     @Override
-    protected void deliverResponse(ArrayList<BaseItem> response) {
+    protected void deliverResponse(T response) {
         mApiInterface.onSuccess(mJSONRawData, response);
     }
 

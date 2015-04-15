@@ -1,19 +1,21 @@
 package lv.androiddev.BaseApp.api;
 
 import com.android.volley.Request;
+
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.util.HashMap;
+
 import lv.androiddev.BaseApp.BaseApplication;
 
 /**
  * Created by martinsstrengis on 14/04/15. Yey
  */
-public class BaseApiBuilder {
+public class BaseApiBuilder<T> {
     public static String BASE_URL = ""; //on Application onCreate set your url
 
-    public ApiRequestList request;
+    public ApiRequest request;
 
     private HashMap<String, String> mPostFields;
     private HashMap<String, String> mHeaders;
@@ -26,7 +28,7 @@ public class BaseApiBuilder {
         return this;
     }
 
-    public BaseApiBuilder setListener(ApiInterface apiInterface){
+    public BaseApiBuilder setListener(ApiInterface<T> apiInterface){
         mApiInterface = apiInterface;
         return this;
     }
@@ -68,7 +70,8 @@ public class BaseApiBuilder {
     }
 
     public void execute(){
-        request = new ApiRequestList(Request.Method.POST, mUrl == null ? BASE_URL : mUrl, mPostFields, mHeaders, mParams, mApiInterface);
+        request = new ApiRequest<>(Request.Method.POST, mUrl == null ? BASE_URL : mUrl, mPostFields, mHeaders, mParams, mApiInterface);
+
         BaseApplication.RQ.add(request);
     }
 }

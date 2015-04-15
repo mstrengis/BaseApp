@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.VolleyError;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -35,7 +37,7 @@ public abstract class BaseFragment extends Fragment{
     public View requestIndicator; //TODO assign in init();
 
     public abstract void init();
-    public abstract void setRequestParams(int page);
+    public abstract void setRequestParams();
     public abstract ArrayList<BaseItem> parseData(JSONObject object);
 
     @Override
@@ -50,7 +52,12 @@ public abstract class BaseFragment extends Fragment{
         init();
 
         if(!_configDisableLoad){
-            mApiInterface = new ApiInterface() {
+            mApiInterface = new ApiInterface<ArrayList<BaseItem>>() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+
                 @Override
                 public ArrayList<BaseItem> parseData(JSONObject object) {
                     return BaseFragment.this.parseData(object);
@@ -61,10 +68,6 @@ public abstract class BaseFragment extends Fragment{
                     hideRequestIndicator();
                 }
 
-                @Override
-                public void onFailure() {
-                    hideRequestIndicator();
-                }
             };
 
             load(false);
@@ -121,7 +124,7 @@ public abstract class BaseFragment extends Fragment{
             apiBuilder.request.cancel();
         }
 
-        setRequestParams(page);
+        setRequestParams();
         showRequestIndicator();
         apiBuilder.execute();
     }
