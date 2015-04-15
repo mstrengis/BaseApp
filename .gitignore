@@ -9,3 +9,5 @@
 *.gradle
 
 *.gradle
+
+app/build.gradle
