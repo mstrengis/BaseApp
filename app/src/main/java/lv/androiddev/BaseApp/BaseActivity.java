@@ -2,6 +2,7 @@ package lv.androiddev.BaseApp;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -24,6 +25,34 @@ public class BaseActivity extends ActionBarActivity {
         if(toolbar != null){
             setSupportActionBar(toolbar);
         }
+
+    }
+
+    public FragmentTransaction getFragmentTransaction(BaseFragment fragment){
+        return getFragmentTransaction(fragment, null, false);
+    }
+
+    public FragmentTransaction getFragmentTransaction(BaseFragment fragment, boolean addToBackStack){
+        return getFragmentTransaction(fragment, null, addToBackStack);
+    }
+
+    public FragmentTransaction getFragmentTransaction(BaseFragment fragment, Bundle args, boolean addToBackStack){
+        if(args != null) {
+            fragment.setArguments(args);
+        }
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.main_content, fragment);
+
+        if(addToBackStack){
+            transaction.addToBackStack("backStackIndicator");
+        }else{
+            //TODO clear Back stack ???
+        }
+
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+
+        return transaction;
     }
 
     public static int dp(int px, DisplayMetrics dm) {

@@ -20,6 +20,49 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
         mInflater = LayoutInflater.from(context);
     }
 
+    public void add(BaseItem item){
+        mItems.add(item);
+        notifyItemInserted(mItems.size() - 1);
+    }
+
+    public void addAll(ArrayList<BaseItem> items){
+        if(items.size() == 0){
+            return;
+        }
+
+        int itemCount = items.size();
+        mItems.addAll(items);
+
+        notifyItemRangeInserted(itemCount, items.size());
+    }
+
+    public void addAll(int startPos, ArrayList<BaseItem> items){
+        int itemCount = items.size();
+        mItems.addAll(items);
+
+        notifyItemRangeInserted(itemCount, items.size());
+    }
+
+    public void insert(BaseItem item, int position){
+        mItems.add(position, item);
+        notifyItemInserted(position);
+    }
+
+    public boolean remove(BaseItem item){
+        int removed = mItems.indexOf(item);
+        if(removed >= 0) {
+            mItems.remove(item);
+            notifyItemRemoved(removed);
+            return true;
+        }
+        return false;
+    }
+
+    public void clear(){
+        mItems.clear();
+        notifyDataSetChanged();
+    }
+
     @Override
     public BaseRecyclerViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         return mItemsToType.get(viewType).getViewHolder(mInflater, viewGroup);

@@ -31,10 +31,10 @@ public abstract class BaseFragment extends Fragment{
 
 
     public int layout;
-    private View mParent;
+    public View rootView;
     private ApiInterface mApiInterface;
 
-    public View requestIndicator; //TODO assign in init();
+    public View progressIndicator; //TODO assign in init();
 
     public abstract void init();
     public abstract void setRequestParams();
@@ -42,11 +42,11 @@ public abstract class BaseFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle state){
-        if (mParent != null && mParent.getParent() != null) {
-            ((ViewGroup) mParent.getParent()).removeView(mParent);
-            return mParent;
+        if (rootView != null && rootView.getParent() != null) {
+            ((ViewGroup) rootView.getParent()).removeView(rootView);
+            return rootView;
         } else {
-            mParent = inflater.inflate(layout, parent, false);
+            rootView = inflater.inflate(layout, parent, false);
         }
 
         init();
@@ -55,7 +55,7 @@ public abstract class BaseFragment extends Fragment{
             mApiInterface = new ApiInterface<ArrayList<BaseItem>>() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-
+                    hideRequestIndicator();
                 }
 
                 @Override
@@ -66,6 +66,7 @@ public abstract class BaseFragment extends Fragment{
                 @Override
                 public void onSuccess(JSONObject rawData, ArrayList<BaseItem> items) {
                     hideRequestIndicator();
+                    BaseFragment.this.dataLoaded(rawData, items);
                 }
 
             };
@@ -73,7 +74,13 @@ public abstract class BaseFragment extends Fragment{
             load(false);
         }
 
-        return mParent;
+        progressIndicator = rootView.findViewById(R.id.progress_indicator);
+
+        return rootView;
+    }
+
+    public void dataLoaded(JSONObject data, ArrayList<BaseItem> items){
+
     }
 
     /*
@@ -103,8 +110,9 @@ public abstract class BaseFragment extends Fragment{
     }
 
     public void showRequestIndicator(){
-        if(requestIndicator != null && !mIsRefreshing){
-            requestIndicator.setVisibility(View.VISIBLE);
+        if(progressIndicator != null && !mIsRefreshing){
+            progressIndicator.setVisibility(View.VISIBLE);
+            //TODO animate ?
         }
 
         mIsRefreshing = false;
@@ -112,8 +120,9 @@ public abstract class BaseFragment extends Fragment{
 
     public void hideRequestIndicator(){
         mIsRefreshing = false;
-        if(requestIndicator != null){
-            requestIndicator.setVisibility(View.GONE);
+        if(progressIndicator != null){
+            progressIndicator.setVisibility(View.GONE);
+            //TODO ANIMATE
         }
     }
 
