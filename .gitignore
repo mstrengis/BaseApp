@@ -17,3 +17,7 @@ app/build.gradle
 gradle.properties
 
 gradle.properties
+
+*.properties
+
+gradle.properties
