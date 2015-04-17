@@ -50,6 +50,7 @@ public abstract class BaseFragment extends Fragment{
     public abstract void setRequestParams();
     public abstract ArrayList<BaseItem> parseData(JSONObject object);
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle state){
         if (rootView != null && rootView.getParent() != null) {

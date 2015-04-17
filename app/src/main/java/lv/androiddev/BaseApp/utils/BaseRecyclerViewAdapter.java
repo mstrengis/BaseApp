@@ -35,7 +35,7 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
             return;
         }
 
-        int itemCount = items.size();
+        int itemCount = mItems.size();
         mItems.addAll(items);
 
         notifyItemRangeInserted(itemCount, items.size());
@@ -45,7 +45,7 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
         int itemCount = items.size();
         mItems.addAll(items);
 
-        notifyItemRangeInserted(itemCount, items.size());
+        notifyItemRangeInserted(startPos, itemCount);
     }
 
     public void insert(BaseItem item, int position){
@@ -61,6 +61,15 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
             return true;
         }
         return false;
+    }
+
+    public void clearAllExceptFirst(){
+        int l = mItems.size();
+        for(int i = 1; i < l; i++){
+            mItems.remove(1);
+        }
+
+        notifyDataSetChanged();
     }
 
     public void clear(){
@@ -87,7 +96,13 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
     }
 
     @Override
+    public long getItemId(int position){
+        return mItems.get(position).id;
+    }
+
+    @Override
     public int getItemCount() {
+
         return mItems.size();
     }
 }

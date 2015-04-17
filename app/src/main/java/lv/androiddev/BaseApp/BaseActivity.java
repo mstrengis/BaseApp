@@ -1,13 +1,16 @@
 package lv.androiddev.BaseApp;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.TransitionInflater;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.KeyEvent;
+import android.view.Window;
 
 /**
  * Created by martinsstrengis on 14/04/15. Yey
@@ -18,6 +21,8 @@ public class BaseActivity extends ActionBarActivity {
 
     public void onCreate(Bundle state) {
         super.onCreate(state);
+
+        //getWindow().addFlags(Window.FEATURE_ACTIVITY_TRANSITIONS | Window.FEATURE_CONTENT_TRANSITIONS);
 
         setContentView(layout);
 
@@ -50,17 +55,19 @@ public class BaseActivity extends ActionBarActivity {
             //TODO clear Back stack ???
         }
 
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        if(addToBackStack && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            fragment.setSharedElementEnterTransition(TransitionInflater.from(this).inflateTransition(android.R.transition.move));
+            fragment.setAllowEnterTransitionOverlap(true);
+        }
 
         return transaction;
     }
 
     public static int dp(int px, DisplayMetrics dm) {
-        try {
+        if(dm != null) {
             return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, px, dm);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
         return px;
     }
 
