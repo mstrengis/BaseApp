@@ -48,9 +48,8 @@ public abstract class BaseListFragment extends BaseFragment {
             recyclerView.setLoadMoreFromTop();
         }
 
-        adapter = new BaseRecyclerViewAdapter(getActivity(), data);
+        adapter = new BaseRecyclerViewAdapter(recyclerView, getActivity(), data);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -65,12 +64,17 @@ public abstract class BaseListFragment extends BaseFragment {
     @Override
     public void showRequestIndicator(){
         super.showRequestIndicator();
+
         recyclerView.setIsLoading(true);
     }
 
     @Override
     public void hideRequestIndicator(){
         recyclerView.setIsLoading(false);
+        if(swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
+
         super.hideRequestIndicator();
     }
 }

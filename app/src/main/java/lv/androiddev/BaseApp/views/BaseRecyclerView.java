@@ -4,6 +4,9 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
+
+import lv.androiddev.BaseApp.R;
 
 public class BaseRecyclerView extends RecyclerView {
 
@@ -16,6 +19,12 @@ public class BaseRecyclerView extends RecyclerView {
     private int mInitialScroll, mLastScrollRange;
     private boolean mIsLoading = false;
     private boolean mLoadMoreFromTop = false;
+
+    public OnItemClickListener mOnItemClickListener;
+
+    public interface OnItemClickListener{
+        void onItemClick(int position, long id, View child);
+    }
 
     public BaseRecyclerView(Context context) {
         super(context);
@@ -30,6 +39,20 @@ public class BaseRecyclerView extends RecyclerView {
     public BaseRecyclerView(Context context, AttributeSet set, int style){
         super(context, set, style);
         init();
+    }
+
+    public boolean hasItemClickListener(){
+        return mOnItemClickListener != null;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
+        mOnItemClickListener = onItemClickListener;
+    }
+
+    public void itemClick(View v){
+        if(hasItemClickListener()) {
+            mOnItemClickListener.onItemClick(getChildPosition(v), getChildItemId(v), v);
+        }
     }
 
     public void setIsLoading(boolean loading){

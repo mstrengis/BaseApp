@@ -1,7 +1,12 @@
 package lv.androiddev.BaseApp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +34,10 @@ public abstract class BaseFragment extends Fragment{
 
     public BaseApiBuilder apiBuilder;
 
+    public IntentFilter intentFilter;
+    private LocalBroadcastManager mLocalBroadcastManager;
+    private BroadcastReceiver mBroadcastReceiver;
+
 
     public int layout;
     public View rootView;
@@ -37,6 +46,7 @@ public abstract class BaseFragment extends Fragment{
     public View progressIndicator; //TODO assign in init();
 
     public abstract void init();
+    public abstract void actionReceived(Context context, Intent intent);
     public abstract void setRequestParams();
     public abstract ArrayList<BaseItem> parseData(JSONObject object);
 
@@ -48,6 +58,8 @@ public abstract class BaseFragment extends Fragment{
         } else {
             rootView = inflater.inflate(layout, parent, false);
         }
+
+        intentFilter = new IntentFilter();
 
         init();
 
@@ -68,7 +80,6 @@ public abstract class BaseFragment extends Fragment{
                     hideRequestIndicator();
                     BaseFragment.this.dataLoaded(rawData, items);
                 }
-
             };
 
             load(false);
@@ -101,11 +112,30 @@ public abstract class BaseFragment extends Fragment{
     public void onResume(){
         isPaused = false;
         super.onResume();
+
+        if(intentFilter.countActions() > 0){
+            mLocalBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
+            mBroadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    actionReceived(context, intent);
+                }
+            };
+
+            mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);
+        }
     }
 
     @Override
     public void onPause(){
         isPaused = true;
+
+        if(intentFilter.countActions() > 0){
+            mLocalBroadcastManager.unregisterReceiver(mBroadcastReceiver);
+            mBroadcastReceiver = null;
+            mLocalBroadcastManager = null;
+        }
+
         super.onPause();
     }
 

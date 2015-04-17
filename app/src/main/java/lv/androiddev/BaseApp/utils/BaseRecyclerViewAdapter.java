@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import lv.androiddev.BaseApp.views.BaseRecyclerView;
+
 /**
  * Created by martinsstrengis on 14/04/15. Yey
  */
@@ -15,9 +17,12 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
     private ArrayList<BaseItem> mItems;
     private LayoutInflater mInflater;
     private SparseArray<BaseItem> mItemsToType = new SparseArray<>();
-    public BaseRecyclerViewAdapter(Context context, ArrayList<BaseItem> items){
+    private BaseRecyclerView mRecyclerView;
+    public BaseRecyclerViewAdapter(BaseRecyclerView recyclerView, Context context, ArrayList<BaseItem> items){
         mItems = items;
         mInflater = LayoutInflater.from(context);
+        recyclerView.setAdapter(this);
+        mRecyclerView = recyclerView;
     }
 
     public void add(BaseItem item){
@@ -70,7 +75,8 @@ public class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseRecyclerVi
 
     @Override
     public void onBindViewHolder(BaseRecyclerViewHolder baseRecyclerViewHolder, int position) {
-        mItems.get(position).setViewHolder(baseRecyclerViewHolder);
+        BaseItem item = mItems.get(position);
+        item.setViewHolder(mRecyclerView, baseRecyclerViewHolder);
     }
 
     @Override

@@ -70,7 +70,7 @@ public class BaseApiBuilder<T> {
     }
 
     public void execute(){
-        request = new ApiRequest<>(Request.Method.POST, mUrl == null ? BASE_URL : mUrl, mPostFields, mHeaders, mParams, mApiInterface);
+        request = new ApiRequest<>(mPostFields != null ? Request.Method.POST : Request.Method.GET, mUrl == null ? BASE_URL : mUrl, mPostFields, mHeaders, mParams, mApiInterface);
 
         BaseApplication.RQ.add(request);
     }
